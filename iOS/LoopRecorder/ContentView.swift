@@ -135,7 +135,7 @@ struct ContentView: View {
                     .background(Circle().fill(Color(.secondarySystemBackground)))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Saved recordings")
+            .accessibilityLabel("Audio Preview")
         }
     }
 

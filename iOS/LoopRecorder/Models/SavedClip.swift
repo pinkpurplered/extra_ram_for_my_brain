@@ -4,6 +4,7 @@ enum SavedClipError: LocalizedError {
     case invalidName
     case nameAlreadyExists
     case renameFailed
+    case moveFailed
 
     var errorDescription: String? {
         switch self {
@@ -13,6 +14,8 @@ enum SavedClipError: LocalizedError {
             return "A recording with that name already exists."
         case .renameFailed:
             return "Couldn't rename the recording."
+        case .moveFailed:
+            return "Couldn't move the recording."
         }
     }
 }
@@ -80,14 +83,44 @@ struct SavedClip: Identifiable, Hashable {
         return sanitized.isEmpty ? nil : sanitized
     }
 
-    static func loadAll() throws -> [SavedClip] {
-        let directory = try SavedClipDirectory.resolveSavedDirectory()
+    func move(to folder: ClipFolder?) throws -> SavedClip {
+        let destinationDirectory: URL
+        if let folder {
+            destinationDirectory = folder.url
+        } else {
+            destinationDirectory = try SavedClipDirectory.resolveSavedDirectory()
+        }
+
+        if url.deletingLastPathComponent().standardizedFileURL == destinationDirectory.standardizedFileURL {
+            return self
+        }
+
+        let destination = destinationDirectory.appendingPathComponent(fileName)
+        if FileManager.default.fileExists(atPath: destination.path) {
+            throw SavedClipError.nameAlreadyExists
+        }
+
+        try FileManager.default.moveItem(at: url, to: destination)
+        guard let moved = SavedClip(url: destination) else {
+            throw SavedClipError.moveFailed
+        }
+        return moved
+    }
+
+    static func loadAll(in directory: URL? = nil) throws -> [SavedClip] {
+        let directory = try directory ?? SavedClipDirectory.resolveSavedDirectory()
         let urls = try FileManager.default.contentsOfDirectory(
             at: directory,
-            includingPropertiesForKeys: [.contentModificationDateKey, .creationDateKey],
+            includingPropertiesForKeys: [.contentModificationDateKey, .creationDateKey, .isDirectoryKey],
             options: [.skipsHiddenFiles]
         )
-        .filter { $0.pathExtension.lowercased() == "m4a" }
+        .filter { url in
+            guard url.pathExtension.lowercased() == "m4a" else { return false }
+            if let values = try? url.resourceValues(forKeys: [.isDirectoryKey]), values.isDirectory == true {
+                return false
+            }
+            return true
+        }
 
         let clips = urls.compactMap { SavedClip(url: $0) }
         return clips.sorted { $0.createdAt > $1.createdAt }
