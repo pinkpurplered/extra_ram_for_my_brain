@@ -2,12 +2,22 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var recorder = LoopAudioRecorder()
+    @StateObject private var clipPlayer = ClipPlaybackController()
     @State private var exportMinutes: Double = 5
     @State private var statusMessage: String?
     @State private var isExporting = false
     @State private var pulse = false
+    @State private var isLowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
+    @State private var showSavedClips = false
+    @State private var previewClip: SavedClip?
+    @State private var showDeletePreviewConfirmation = false
+    @State private var showRenamePreviewSheet = false
 
     private let accent = Color(red: 0.95, green: 0.35, blue: 0.28)
+
+    private var shouldPulse: Bool {
+        recorder.isRecording && pulse && !isLowPowerModeEnabled
+    }
 
     var body: some View {
         ZStack {
@@ -50,6 +60,16 @@ struct ContentView: View {
         .onChange(of: recorder.isRecording) { isRecording in
             pulse = isRecording
         }
+        .onReceive(NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange)) { _ in
+            isLowPowerModeEnabled = ProcessInfo.processInfo.isLowPowerModeEnabled
+        }
+        .sheet(isPresented: $showSavedClips) {
+            SavedClipsSheet(player: clipPlayer)
+        }
+        .onChange(of: recorder.lastSavedURL) { url in
+            guard let url else { return }
+            previewClip = SavedClip(url: url)
+        }
     }
 
     private var background: some View {
@@ -68,39 +88,54 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
-            Text("extra RAM for my brain")
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .foregroundStyle(.secondary)
+        ZStack(alignment: .topTrailing) {
+            VStack(spacing: 10) {
+                Text("extra RAM for my brain")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.secondary)
 
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(recorder.isRecording ? accent : Color.secondary.opacity(0.4))
-                    .frame(width: 8, height: 8)
-                    .scaleEffect(recorder.isRecording && pulse ? 1.2 : 1)
-                    .animation(
-                        recorder.isRecording
-                            ? .easeInOut(duration: 1).repeatForever(autoreverses: true)
-                            : .default,
-                        value: pulse
-                    )
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(recorder.isRecording ? accent : Color.secondary.opacity(0.4))
+                        .frame(width: 8, height: 8)
+                        .scaleEffect(shouldPulse ? 1.2 : 1)
+                        .animation(
+                            shouldPulse
+                                ? .easeInOut(duration: 1).repeatForever(autoreverses: true)
+                                : .default,
+                            value: pulse
+                        )
 
-                Text(recorder.isRecording ? "Recording" : "Idle")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundStyle(recorder.isRecording ? accent : .secondary)
+                    Text(recorder.isRecording ? "Recording" : "Idle")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(recorder.isRecording ? accent : .secondary)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(Color(.secondarySystemBackground))
+                )
+
+                if recorder.isRecording {
+                    Text("1 hour rolling buffer")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(Color(.secondarySystemBackground))
-            )
+            .frame(maxWidth: .infinity)
 
-            if recorder.isRecording {
-                Text("1 hour rolling buffer")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+            Button {
+                showSavedClips = true
+            } label: {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .padding(10)
+                    .background(Circle().fill(Color(.secondarySystemBackground)))
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Saved recordings")
         }
     }
 
@@ -115,10 +150,12 @@ struct ContentView: View {
                         Circle()
                             .stroke(accent.opacity(0.35), lineWidth: 2)
                             .frame(width: 112, height: 112)
-                            .scaleEffect(pulse ? 1.08 : 1)
-                            .opacity(pulse ? 0.4 : 0.8)
+                            .scaleEffect(shouldPulse ? 1.08 : 1)
+                            .opacity(shouldPulse ? 0.4 : 0.8)
                             .animation(
-                                .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
+                                shouldPulse
+                                    ? .easeInOut(duration: 1.2).repeatForever(autoreverses: true)
+                                    : .default,
                                 value: pulse
                             )
                     }
@@ -201,17 +238,26 @@ struct ContentView: View {
             .tint(accent)
             .disabled(!recorder.isRecording || isExporting)
 
-            if let lastSaved = recorder.lastSavedURL {
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.green)
-                    Text(lastSaved.lastPathComponent)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+            if let previewClip {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                        Text("Ready to preview")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ClipPlayerView(
+                        player: clipPlayer,
+                        clip: previewClip,
+                        compact: true,
+                        onDelete: { showDeletePreviewConfirmation = true },
+                        onRename: { showRenamePreviewSheet = true }
+                    )
                 }
+                .padding(.top, 4)
             }
         }
         .padding(20)
@@ -219,6 +265,26 @@ struct ContentView: View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(Color(.secondarySystemGroupedBackground))
         )
+        .confirmationDialog(
+            "Delete this recording?",
+            isPresented: $showDeletePreviewConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                deletePreviewClip()
+            }
+        } message: {
+            if let previewClip {
+                Text(previewClip.displayTitle)
+            }
+        }
+        .sheet(isPresented: $showRenamePreviewSheet) {
+            if let previewClip {
+                RenameClipSheet(clip: previewClip) { renamed in
+                    applyPreviewRename(from: previewClip, to: renamed)
+                }
+            }
+        }
     }
 
     private struct Feedback {
@@ -246,6 +312,31 @@ struct ContentView: View {
             }
         }
         return error.localizedDescription
+    }
+
+    private func deletePreviewClip() {
+        guard let previewClip else { return }
+        if clipPlayer.currentClipURL == previewClip.url {
+            clipPlayer.stop()
+        }
+        try? previewClip.delete()
+        self.previewClip = nil
+        statusMessage = nil
+    }
+
+    private func applyPreviewRename(from oldClip: SavedClip, to newClip: SavedClip) {
+        let wasPlaying = clipPlayer.currentClipURL == oldClip.url && clipPlayer.isPlaying
+        previewClip = newClip
+        statusMessage = "Saved · \(newClip.fileName)"
+
+        if clipPlayer.currentClipURL == oldClip.url {
+            Task {
+                await clipPlayer.load(newClip.url)
+                if wasPlaying {
+                    clipPlayer.togglePlayPause()
+                }
+            }
+        }
     }
 }
 

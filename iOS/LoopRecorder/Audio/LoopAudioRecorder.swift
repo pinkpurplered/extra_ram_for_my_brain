@@ -18,6 +18,10 @@ final class LoopAudioRecorder: ObservableObject {
     let segmentDurationSeconds: TimeInterval = 60
     let retentionWindow: TimeInterval = 1 * 60 * 60 // 1 hour
 
+    // Voice-optimized encoding (lower CPU and battery than music-quality settings)
+    private let sampleRate: Double = 16_000
+    private let encoderBitRate: Int = 32_000
+
     private lazy var retentionManager = SegmentRetentionManager(retentionWindow: retentionWindow)
 
     func prepare() {
@@ -58,10 +62,11 @@ final class LoopAudioRecorder: ObservableObject {
         segmentTimer?.invalidate()
         segmentTimer = nil
         isRecording = false
+        try? audioSession.setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     private func configureSession() throws {
-        try audioSession.setCategory(.playAndRecord, mode: .default, options: [.mixWithOthers])
+        try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, options: [.mixWithOthers])
         try audioSession.setActive(true, options: [])
     }
 
@@ -101,9 +106,10 @@ final class LoopAudioRecorder: ObservableObject {
         let url = try newSegmentURL()
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
-            AVSampleRateKey: 44100,
+            AVSampleRateKey: sampleRate,
             AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue
+            AVEncoderBitRateKey: encoderBitRate,
+            AVEncoderAudioQualityKey: AVAudioQuality.low.rawValue
         ]
 
         recorder = try AVAudioRecorder(url: url, settings: settings)

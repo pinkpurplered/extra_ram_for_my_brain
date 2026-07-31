@@ -15,6 +15,11 @@
 		A10000010000000000000006 /* RecordingSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000006 /* RecordingSegment.swift */; };
 		A10000010000000000000007 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000007 /* Assets.xcassets */; };
 		A10000010000000000000008 /* ICloudSavedDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000010 /* ICloudSavedDirectory.swift */; };
+		A10000010000000000000009 /* SavedClip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000011 /* SavedClip.swift */; };
+		A10000010000000000000010 /* ClipPlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000012 /* ClipPlaybackController.swift */; };
+		A10000010000000000000011 /* ClipPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000013 /* ClipPlayerView.swift */; };
+		A10000010000000000000012 /* SavedClipsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000014 /* SavedClipsSheet.swift */; };
+		A10000010000000000000013 /* RenameClipSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000015 /* RenameClipSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +33,11 @@
 		A20000010000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000010000000000000009 /* LoopRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoopRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000010000000000000010 /* ICloudSavedDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSavedDirectory.swift; sourceTree = "<group>"; };
+		A20000010000000000000011 /* SavedClip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedClip.swift; sourceTree = "<group>"; };
+		A20000010000000000000012 /* ClipPlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlaybackController.swift; sourceTree = "<group>"; };
+		A20000010000000000000013 /* ClipPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipPlayerView.swift; sourceTree = "<group>"; };
+		A20000010000000000000014 /* SavedClipsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedClipsSheet.swift; sourceTree = "<group>"; };
+		A20000010000000000000015 /* RenameClipSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenameClipSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +66,7 @@
 				A20000010000000000000002 /* ContentView.swift */,
 				A40000010000000000000004 /* Audio */,
 				A40000010000000000000005 /* Models */,
+				A40000010000000000000007 /* Views */,
 				A40000010000000000000006 /* Config */,
 				A20000010000000000000007 /* Assets.xcassets */,
 			);
@@ -77,6 +88,7 @@
 				A20000010000000000000004 /* AudioCompositionExporter.swift */,
 				A20000010000000000000005 /* SegmentRetentionManager.swift */,
 				A20000010000000000000010 /* ICloudSavedDirectory.swift */,
+				A20000010000000000000012 /* ClipPlaybackController.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -85,8 +97,19 @@
 			isa = PBXGroup;
 			children = (
 				A20000010000000000000006 /* RecordingSegment.swift */,
+				A20000010000000000000011 /* SavedClip.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000013 /* ClipPlayerView.swift */,
+				A20000010000000000000014 /* SavedClipsSheet.swift */,
+				A20000010000000000000015 /* RenameClipSheet.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		A40000010000000000000006 /* Config */ = {
@@ -173,6 +196,11 @@
 				A10000010000000000000005 /* SegmentRetentionManager.swift in Sources */,
 				A10000010000000000000006 /* RecordingSegment.swift in Sources */,
 				A10000010000000000000008 /* ICloudSavedDirectory.swift in Sources */,
+				A10000010000000000000009 /* SavedClip.swift in Sources */,
+				A10000010000000000000010 /* ClipPlaybackController.swift in Sources */,
+				A10000010000000000000011 /* ClipPlayerView.swift in Sources */,
+				A10000010000000000000012 /* SavedClipsSheet.swift in Sources */,
+				A10000010000000000000013 /* RenameClipSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,7 +333,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 75R8BQ422C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Config/Info.plist;
@@ -330,7 +358,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 75R8BQ422C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Config/Info.plist;

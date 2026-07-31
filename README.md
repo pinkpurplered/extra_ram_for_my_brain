@@ -1,57 +1,17 @@
 # extra_ram_for_my_brain
 
-Personal tools for capturing and keeping audio when you need a rolling buffer of recent sound — not a full archive of everything.
+Personal tools for keeping a rolling buffer of recent audio — not a full archive.
 
-## Projects
+## Loop Recorder (iOS)
 
-| Path | Description |
-|------|-------------|
-| [`iOS/LoopRecorder`](iOS/LoopRecorder/) | **extra RAM for my brain** — continuous background recording with a 1-hour rolling buffer and one-tap clip export |
+Records in the background and keeps **only the last hour**. Save the last 1–60 minutes anytime as a `.m4a` file.
 
-## extra RAM for my brain (iOS)
-
-A minimal SwiftUI app that:
-
-- Records in the background using 60-second segments
-- Keeps only the **last 1 hour** (older segments are deleted automatically)
-- Lets you **save the last N minutes** (1–60) as a permanent `.m4a` file
-
-**Best on a real iPhone** — the simulator does not provide a microphone.
-
-### Quick start
+Use a **real iPhone** — the simulator has no microphone.
 
 ```bash
 open iOS/LoopRecorder/LoopRecorder.xcodeproj
 ```
 
-1. In Xcode, select your **Signing Team** (Signing & Capabilities).
-2. Plug in your iPhone, enable **Developer Mode** on the device if prompted.
-3. Choose your phone as the run destination and press **Run** (⌘R).
-4. On first install: **Settings → General → VPN & Device Management** → trust your developer certificate.
-5. Grant **microphone** permission when you start recording.
+Pick your signing team, connect your phone, press **Run** (⌘R).
 
-Full setup, architecture, and configuration: **[iOS/LoopRecorder/README.md](iOS/LoopRecorder/README.md)**
-
-## Requirements
-
-- macOS with **Xcode 15+**
-- iPhone running **iOS 15+** (for Loop Recorder)
-- Apple ID (free Personal Team is enough for device testing)
-
-## Repository structure
-
-```
-extra_ram_for_my_brain/
-├── README.md                 # This file
-├── iOS/
-│   └── LoopRecorder/         # Loop Recorder Xcode project + source
-│       ├── LoopRecorder.xcodeproj
-│       ├── Audio/              # Recording, retention, export
-│       ├── Models/
-│       ├── Config/             # Info.plist
-│       └── README.md           # Detailed app documentation
-```
-
-## License
-
-Private / personal use unless otherwise noted.
+Details: [iOS/LoopRecorder/README.md](iOS/LoopRecorder/README.md)

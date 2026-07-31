@@ -25,8 +25,8 @@ final class AudioCompositionExporter {
 
             let segStart = max(seg.startDate, startDate)
             let segEnd = min(seg.endDate, endDate)
-            let rangeStart = CMTime(seconds: segStart.timeIntervalSince(seg.startDate), preferredTimescale: 44100)
-            let rangeDuration = CMTime(seconds: segEnd.timeIntervalSince(segStart), preferredTimescale: 44100)
+            let rangeStart = CMTime(seconds: segStart.timeIntervalSince(seg.startDate), preferredTimescale: 16_000)
+            let rangeDuration = CMTime(seconds: segEnd.timeIntervalSince(segStart), preferredTimescale: 16_000)
             let timeRange = CMTimeRange(start: rangeStart, duration: rangeDuration)
 
             try compTrack.insertTimeRange(timeRange, of: track, at: insertCursor)
