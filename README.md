@@ -6,9 +6,9 @@ Personal tools for capturing and keeping audio when you need a rolling buffer of
 
 | Path | Description |
 |------|-------------|
-| [`iOS/LoopRecorder`](iOS/LoopRecorder/) | iPhone app — continuous background recording with a 1-hour rolling buffer and one-tap clip export |
+| [`iOS/LoopRecorder`](iOS/LoopRecorder/) | **extra RAM for my brain** — continuous background recording with a 1-hour rolling buffer and one-tap clip export |
 
-## Loop Recorder (iOS)
+## extra RAM for my brain (iOS)
 
 A minimal SwiftUI app that:
 

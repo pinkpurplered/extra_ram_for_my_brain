@@ -69,7 +69,7 @@ struct ContentView: View {
 
     private var header: some View {
         VStack(spacing: 10) {
-            Text("Loop Recorder")
+            Text("extra RAM for my brain")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(.secondary)
 
@@ -150,6 +150,10 @@ struct ContentView: View {
             Label("Save clip", systemImage: "square.and.arrow.down")
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundStyle(.primary)
+
+            Text("Saved to \(SavedClipDirectory.displayPath)")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
 
             HStack {
                 Text("Duration")

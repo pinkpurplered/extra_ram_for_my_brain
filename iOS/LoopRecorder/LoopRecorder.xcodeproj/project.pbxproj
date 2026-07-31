@@ -14,6 +14,7 @@
 		A10000010000000000000005 /* SegmentRetentionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000005 /* SegmentRetentionManager.swift */; };
 		A10000010000000000000006 /* RecordingSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000006 /* RecordingSegment.swift */; };
 		A10000010000000000000007 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000007 /* Assets.xcassets */; };
+		A10000010000000000000008 /* ICloudSavedDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000010 /* ICloudSavedDirectory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A20000010000000000000007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000010000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000010000000000000009 /* LoopRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoopRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000010000000000000010 /* ICloudSavedDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSavedDirectory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				A20000010000000000000003 /* LoopAudioRecorder.swift */,
 				A20000010000000000000004 /* AudioCompositionExporter.swift */,
 				A20000010000000000000005 /* SegmentRetentionManager.swift */,
+				A20000010000000000000010 /* ICloudSavedDirectory.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 				A10000010000000000000004 /* AudioCompositionExporter.swift in Sources */,
 				A10000010000000000000005 /* SegmentRetentionManager.swift in Sources */,
 				A10000010000000000000006 /* RecordingSegment.swift in Sources */,
+				A10000010000000000000008 /* ICloudSavedDirectory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

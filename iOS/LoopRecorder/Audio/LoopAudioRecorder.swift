@@ -21,7 +21,7 @@ final class LoopAudioRecorder: ObservableObject {
     private lazy var retentionManager = SegmentRetentionManager(retentionWindow: retentionWindow)
 
     func prepare() {
-        // Nothing heavy on main thread yet; session configured on start
+        try? SavedClipDirectory.resolveSavedDirectory()
     }
 
     func start() {
@@ -89,12 +89,6 @@ final class LoopAudioRecorder: ObservableObject {
         return dir
     }
 
-    private func savedDirectory() throws -> URL {
-        let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent("Saved", isDirectory: true)
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir
-    }
 
     private func newSegmentURL() throws -> URL {
         let dir = try recordingsDirectory()
@@ -123,7 +117,8 @@ final class LoopAudioRecorder: ObservableObject {
     func saveLast(minutes: Int) async throws -> URL {
         let end = Date()
         let start = end.addingTimeInterval(TimeInterval(-minutes) * 60)
-        let outURL = try savedDirectory().appendingPathComponent(outputFileName(suffixMinutes: minutes))
+        let savedDir = try SavedClipDirectory.resolveSavedDirectory()
+        let outURL = savedDir.appendingPathComponent(outputFileName(suffixMinutes: minutes))
         let url = try await AudioCompositionExporter.export(segments: segments, from: start, to: end, to: outURL)
         protectedURLs.insert(url)
         lastSavedURL = url

@@ -1,4 +1,4 @@
-# Loop Recorder
+# extra RAM for my brain
 
 Continuous background voice recording with a **1-hour rolling buffer**, plus a one-tap way to save the last N minutes as a permanent clip.
 
@@ -7,14 +7,14 @@ Continuous background voice recording with a **1-hour rolling buffer**, plus a o
 
 ## What it does
 
-Loop Recorder is designed for situations where you want recent audio on tap without storing hours of recordings forever.
+**extra RAM for my brain** is designed for situations where you want recent audio on tap without storing hours of recordings forever.
 
 | Behavior | Detail |
 |----------|--------|
 | **Rolling buffer** | Keeps the most recent **1 hour** of audio in segmented files |
 | **Segment size** | **60 seconds** per file (`.m4a`, AAC) |
 | **Background** | Recording continues when the app is backgrounded (audio background mode) |
-| **Save clip** | Export the last **1–60 minutes** into `Documents/Saved/` as one `.m4a` |
+| **Save clip** | Export the last **1–60 minutes** to `Documents/extraramformybrain/` (visible in the Files app) |
 | **Storage** | Segments older than 1 hour are deleted automatically |
 
 Saved clips are **separate files** in `Saved/` and are not removed by the rolling buffer.
@@ -81,20 +81,20 @@ When you tap record, allow microphone access. Without it, recording cannot start
 1. **Tap the mic** — starts rolling recording (status shows *Recording*).
 2. **Tap stop** — ends recording (buffer segments remain on disk until retention runs).
 3. **Adjust duration** — slider under *Save clip* (1–60 minutes).
-4. **Save** — exports a single `.m4a` to the app’s `Saved` folder.
-
-While recording, a subtle pulse animation indicates active capture.
+4. **Save** — exports a single `.m4a` to `Documents/extraramformybrain`.
 
 ## Where files live
 
-On device, inside the app sandbox:
-
 | Path | Contents |
 |------|----------|
-| `Documents/Segments/` | Rolling buffer segment files (`segment_*.m4a`) |
-| `Documents/Saved/` | Exported clips (`saved_*m_*.m4a`) |
+| `Documents/Segments/` (on device) | Rolling buffer segment files — local only |
+| **Files → On My iPhone → extra RAM for my brain → extraramformybrain/** | Exported clips (`saved_*m_*.m4a`) |
 
-Access during development via Xcode **Devices and Simulators** → select device → **Loop Recorder** → container download, or a future in-app share feature.
+Open the **Files** app → **Browse → On My iPhone → extra RAM for my brain → extraramformybrain**.
+
+Rolling buffer segments stay on the phone to save space. You can move saved clips to **iCloud Drive** from the Files app.
+
+> **Note:** Syncing saves directly to iCloud Drive inside the app requires a paid **Apple Developer Program** membership (free Personal Teams do not support the iCloud capability). With a free Apple ID, clips are stored locally and exposed via the Files app.
 
 ## Configuration
 
@@ -119,11 +119,12 @@ ContentView.swift            SwiftUI UI
 Audio/
   LoopAudioRecorder.swift    Session, segments, timer rotation, save API
   SegmentRetentionManager.swift   Deletes segments past retention window
+  SavedClipDirectory.swift (ICloudSavedDirectory.swift)   Documents/extraramformybrain path
   AudioCompositionExporter.swift  Stitches segments → single .m4a (AVMutableComposition)
 Models/
   RecordingSegment.swift       Segment metadata (url, start, duration)
 Config/
-  Info.plist                   Mic usage string, background audio mode
+  Info.plist                   Mic usage, background audio, Files app sharing
 ```
 
 ### Recording flow
