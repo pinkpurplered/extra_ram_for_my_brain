@@ -5,6 +5,7 @@ import AVFoundation
 final class LoopAudioRecorder: ObservableObject {
     @Published private(set) var isRecording: Bool = false
     @Published private(set) var lastSavedURL: URL?
+    @Published var lastError: String?
 
     private let audioSession = AVAudioSession.sharedInstance()
     private var recorder: AVAudioRecorder?
@@ -15,7 +16,7 @@ final class LoopAudioRecorder: ObservableObject {
 
     // Configurable
     let segmentDurationSeconds: TimeInterval = 60
-    let retentionWindow: TimeInterval = 5 * 60 * 60 // 5 hours
+    let retentionWindow: TimeInterval = 1 * 60 * 60 // 1 hour
 
     private lazy var retentionManager = SegmentRetentionManager(retentionWindow: retentionWindow)
 
@@ -25,14 +26,28 @@ final class LoopAudioRecorder: ObservableObject {
 
     func start() {
         Task { @MainActor in
+            lastError = nil
             do {
+                let granted = await requestMicrophonePermission()
+                guard granted else {
+                    lastError = "Microphone access is required to record."
+                    return
+                }
                 try configureSession()
                 try startNewSegment()
                 isRecording = true
                 scheduleNextSegment()
             } catch {
                 isRecording = false
-                print("Start error: \(error)")
+                lastError = "Could not start recording: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func requestMicrophonePermission() async -> Bool {
+        await withCheckedContinuation { continuation in
+            audioSession.requestRecordPermission { granted in
+                continuation.resume(returning: granted)
             }
         }
     }
@@ -53,8 +68,9 @@ final class LoopAudioRecorder: ObservableObject {
     private func scheduleNextSegment() {
         segmentTimer?.invalidate()
         segmentTimer = Timer.scheduledTimer(withTimeInterval: segmentDurationSeconds, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.rotateSegment()
+            Task { @MainActor in
+                self?.rotateSegment()
+            }
         }
         RunLoop.main.add(segmentTimer!, forMode: .common)
     }
