@@ -135,6 +135,28 @@ final class LoopAudioRecorder: ObservableObject {
     }
 
     func saveLast(minutes: Int) async throws -> URL {
+        let wasRecording = isRecording
+        if wasRecording {
+            // Close the in-progress segment so AVFoundation can read the file.
+            recorder?.stop()
+            recorder = nil
+            segmentTimer?.invalidate()
+            segmentTimer = nil
+            finalizeLastSegment()
+        }
+
+        defer {
+            if wasRecording {
+                do {
+                    try startNewSegment()
+                    scheduleNextSegment()
+                } catch {
+                    isRecording = false
+                    lastError = "Could not resume recording: \(error.localizedDescription)"
+                }
+            }
+        }
+
         let end = Date()
         let start = end.addingTimeInterval(TimeInterval(-minutes) * 60)
         let savedDir = try SavedClipDirectory.resolveSavedDirectory()
