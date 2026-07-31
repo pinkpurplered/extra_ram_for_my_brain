@@ -59,6 +59,7 @@ final class LoopAudioRecorder: ObservableObject {
     func stop() {
         recorder?.stop()
         recorder = nil
+        finalizeLastSegment()
         segmentTimer?.invalidate()
         segmentTimer = nil
         isRecording = false
@@ -83,8 +84,21 @@ final class LoopAudioRecorder: ObservableObject {
     private func rotateSegment() {
         recorder?.stop()
         recorder = nil
+        finalizeLastSegment()
         try? startNewSegment()
         retentionManager.applyRetention(segments: &segments, protectedURLs: protectedURLs)
+    }
+
+    private func finalizeLastSegment() {
+        guard let lastIndex = segments.indices.last else { return }
+        let last = segments[lastIndex]
+        let actualDuration = Date().timeIntervalSince(last.startDate)
+        guard actualDuration > 0 else { return }
+        segments[lastIndex] = RecordingSegment(
+            url: last.url,
+            startDate: last.startDate,
+            duration: actualDuration
+        )
     }
 
     private func recordingsDirectory() throws -> URL {

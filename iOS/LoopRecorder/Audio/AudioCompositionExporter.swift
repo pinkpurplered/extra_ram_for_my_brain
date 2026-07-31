@@ -21,17 +21,29 @@ final class AudioCompositionExporter {
         var insertCursor = CMTime.zero
         for seg in relevant {
             let asset = AVURLAsset(url: seg.url)
-            guard let track = asset.tracks(withMediaType: .audio).first else { continue }
+            guard let track = try await asset.loadTracks(withMediaType: .audio).first else { continue }
 
             let segStart = max(seg.startDate, startDate)
             let segEnd = min(seg.endDate, endDate)
-            let rangeStart = CMTime(seconds: segStart.timeIntervalSince(seg.startDate), preferredTimescale: 16_000)
-            let rangeDuration = CMTime(seconds: segEnd.timeIntervalSince(segStart), preferredTimescale: 16_000)
-            let timeRange = CMTimeRange(start: rangeStart, duration: rangeDuration)
+            let offsetInFile = segStart.timeIntervalSince(seg.startDate)
+            var rangeDuration = segEnd.timeIntervalSince(segStart)
+
+            let assetDuration = try await asset.load(.duration).seconds
+            if assetDuration.isFinite, assetDuration > 0 {
+                let available = max(0, assetDuration - offsetInFile)
+                rangeDuration = min(rangeDuration, available)
+            }
+            guard rangeDuration > 0 else { continue }
+
+            let rangeStart = CMTime(seconds: offsetInFile, preferredTimescale: 16_000)
+            let rangeDurationTime = CMTime(seconds: rangeDuration, preferredTimescale: 16_000)
+            let timeRange = CMTimeRange(start: rangeStart, duration: rangeDurationTime)
 
             try compTrack.insertTimeRange(timeRange, of: track, at: insertCursor)
-            insertCursor = CMTimeAdd(insertCursor, rangeDuration)
+            insertCursor = CMTimeAdd(insertCursor, rangeDurationTime)
         }
+
+        guard insertCursor.seconds > 0 else { throw ExportError.noSegments }
 
         try? FileManager.default.removeItem(at: outputURL)
         guard let export = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A) else {
