@@ -38,6 +38,7 @@ final class LoopAudioRecorder: ObservableObject {
                     return
                 }
                 try configureSession()
+                purgeStaleSegments()
                 try startNewSegment()
                 isRecording = true
                 scheduleNextSegment()
@@ -99,6 +100,13 @@ final class LoopAudioRecorder: ObservableObject {
             startDate: last.startDate,
             duration: actualDuration
         )
+    }
+
+    private func purgeStaleSegments() {
+        retentionManager.applyRetention(segments: &segments, protectedURLs: protectedURLs)
+        if let dir = try? recordingsDirectory() {
+            retentionManager.purgeStaleSegmentFiles(in: dir, protectedURLs: protectedURLs)
+        }
     }
 
     private func recordingsDirectory() throws -> URL {

@@ -19,6 +19,26 @@ final class SegmentRetentionManager {
         }
         segments = kept
     }
+
+    /// Removes segment files on disk that are older than the retention window.
+    /// Catches orphans left behind when recording stops before the first segment rotation.
+    func purgeStaleSegmentFiles(in directory: URL, protectedURLs: Set<URL>) {
+        let cutoff = Date().addingTimeInterval(-retentionWindow)
+        guard let urls = try? FileManager.default.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return }
+
+        for url in urls where url.pathExtension == "m4a" {
+            guard !protectedURLs.contains(url) else { continue }
+            let modDate = (try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate)
+                ?? .distantPast
+            if modDate < cutoff {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+    }
 }
 
 
