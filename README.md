@@ -1,6 +1,6 @@
 # extra_ram_for_my_brain
 
-Personal tools for keeping a rolling buffer of recent audio — not a full archive.
+Memorizing the last hour of audio without using brain power.
 
 ## Loop Recorder (iOS)
 
