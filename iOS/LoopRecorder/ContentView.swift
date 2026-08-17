@@ -14,40 +14,54 @@ struct ContentView: View {
     @State private var showRenamePreviewSheet = false
 
     private let accent = Color(red: 0.95, green: 0.35, blue: 0.28)
+    private static let buyMeACoffeeURL = URL(string: "https://buymeacoffee.com/pinkredpurple")!
 
     private var shouldPulse: Bool {
         recorder.isRecording && pulse && !isLowPowerModeEnabled
     }
 
     var body: some View {
-        ZStack {
-            background
+        GeometryReader { geometry in
+            ZStack {
+                background
 
-            VStack(spacing: 0) {
-                header
-                    .padding(.top, 8)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        header
+                            .padding(.top, 8)
 
-                Spacer(minLength: 24)
+                        Spacer(minLength: 24)
 
-                recordControl
+                        recordControl
 
-                Spacer(minLength: 32)
+                        Spacer(minLength: 32)
 
-                saveCard
+                        saveCard
 
-                if let feedback = combinedFeedback {
-                    Text(feedback.text)
-                        .font(.subheadline)
-                        .foregroundStyle(feedback.isSuccess ? .green : .red)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 16)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                        if let feedback = combinedFeedback {
+                            Text(feedback.text)
+                                .font(.subheadline)
+                                .foregroundStyle(feedback.isSuccess ? .green : .red)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 16)
+                                .transition(.opacity.combined(with: .move(edge: .bottom)))
+                        }
+
+                        Spacer(minLength: 16)
+
+                        Link(destination: Self.buyMeACoffeeURL) {
+                            Label("Buy me a coffee", systemImage: "cup.and.saucer.fill")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(.bottom, 4)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 12)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: geometry.size.height)
                 }
-
-                Spacer(minLength: 16)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 12)
         }
         .animation(.easeInOut(duration: 0.25), value: recorder.isRecording)
         .animation(.easeInOut(duration: 0.2), value: statusMessage)
@@ -90,7 +104,7 @@ struct ContentView: View {
     private var header: some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 10) {
-                Text("extra RAM for my brain")
+                Text("Recall Audio")
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(.secondary)
 
@@ -237,6 +251,12 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             .tint(accent)
             .disabled(!recorder.isRecording || isExporting)
+
+            if !recorder.isRecording {
+                Text("Start recording to enable saving.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             if let previewClip {
                 VStack(alignment: .leading, spacing: 12) {

@@ -68,8 +68,7 @@ struct SavedClipsSheet: View {
                                     } label: {
                                         SavedClipRow(
                                             clip: clip,
-                                            isSelected: selectedClip == clip,
-                                            isPlaying: player.currentClipURL == clip.url && player.isPlaying
+                                            isSelected: selectedClip == clip
                                         )
                                     }
                                     .buttonStyle(.plain)
@@ -256,15 +255,7 @@ struct SavedClipsSheet: View {
     }
 
     private func select(_ clip: SavedClip) {
-        if selectedClip == clip {
-            player.togglePlayPause()
-        } else {
-            selectedClip = clip
-            Task {
-                await player.load(clip.url)
-                player.togglePlayPause()
-            }
-        }
+        selectedClip = clip
     }
 
     private func delete(_ clip: SavedClip) {
@@ -416,7 +407,6 @@ private struct FolderRow: View {
 private struct SavedClipRow: View {
     let clip: SavedClip
     let isSelected: Bool
-    let isPlaying: Bool
 
     private let accent = Color(red: 0.95, green: 0.35, blue: 0.28)
 
@@ -426,7 +416,7 @@ private struct SavedClipRow: View {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(isSelected ? accent.opacity(0.15) : Color(.tertiarySystemFill))
                     .frame(width: 36, height: 36)
-                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                Image(systemName: "waveform")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(isSelected ? accent : .secondary)
             }

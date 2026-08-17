@@ -5,7 +5,7 @@ enum SavedClipDirectory {
 
     /// Shown in the app — Files app path on device.
     static var displayPath: String {
-        "On My iPhone/extra RAM for my brain/\(folderName)"
+        "On My iPhone/Recall Audio/\(folderName)"
     }
 
     static func resolveSavedDirectory() throws -> URL {

@@ -1,0 +1,99 @@
+# App Store metadata for "Recall Audio"
+
+default_platform(:ios)
+
+def asc_api_key
+  app_store_connect_api_key(
+    key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID", "D8WLYCSLX9"),
+    issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID", "777189c3-31c7-4d39-9135-fa3d520d3162"),
+    key_filepath: ENV.fetch(
+      "APP_STORE_CONNECT_API_KEY_PATH",
+      File.expand_path("~/.appstoreconnect/private_keys/AuthKey_D8WLYCSLX9.p8")
+    ),
+    in_house: false
+  )
+end
+
+platform :ios do
+  desc "Create the App Store Connect app record (run once)"
+  lane :create_app do
+    asc_api_key
+    produce(
+      app_name: "Recall Audio",
+      app_identifier: "com.extraram.LoopRecorder",
+      sku: "recall-audio-ios-2026",
+      language: "en-US",
+      app_version: "1.0",
+      platform: "ios",
+      skip_itc: false,
+      skip_devcenter: true
+    )
+  end
+
+  desc "Upload an existing IPA to App Store Connect"
+  lane :upload_ipa do |options|
+    api_key = asc_api_key
+    ipa = options[:ipa] || "/tmp/LoopRecorder-final-export/LoopRecorder.ipa"
+    upload_to_app_store(
+      api_key: api_key,
+      ipa: ipa,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Build and upload a release build to App Store Connect"
+  lane :release do
+    api_key = asc_api_key
+    build_app(
+      scheme: "LoopRecorder",
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "automatic",
+        uploadSymbols: true,
+        teamID: "75R8BQ422C"
+      },
+      output_directory: "./build",
+      output_name: "LoopRecorder.ipa",
+      clean: true
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Upload metadata and screenshots only"
+  lane :metadata do
+    api_key = asc_api_key
+    upload_to_app_store(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_screenshots: false,
+      submit_for_review: false,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+
+  desc "Submit the latest build for App Store review"
+  lane :submit do
+    api_key = asc_api_key
+    upload_to_app_store(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      submit_for_review: true,
+      automatic_release: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
+end

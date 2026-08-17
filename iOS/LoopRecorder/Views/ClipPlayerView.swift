@@ -83,6 +83,8 @@ struct ClipPlayerView: View {
             }
         }
         .task(id: clip.url) {
+            // Compact preview sits on the recording screen — loading here would fight the mic session.
+            guard !compact else { return }
             if player.currentClipURL != clip.url {
                 await player.load(clip.url)
             }

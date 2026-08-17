@@ -35,8 +35,8 @@ final class AudioCompositionExporter {
             }
             guard rangeDuration > 0 else { continue }
 
-            let rangeStart = CMTime(seconds: offsetInFile, preferredTimescale: 16_000)
-            let rangeDurationTime = CMTime(seconds: rangeDuration, preferredTimescale: 16_000)
+            let rangeStart = CMTime(seconds: offsetInFile, preferredTimescale: 48_000)
+            let rangeDurationTime = CMTime(seconds: rangeDuration, preferredTimescale: 48_000)
             let timeRange = CMTimeRange(start: rangeStart, duration: rangeDurationTime)
 
             try compTrack.insertTimeRange(timeRange, of: track, at: insertCursor)
@@ -49,13 +49,19 @@ final class AudioCompositionExporter {
         guard let export = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A) else {
             throw ExportError.exportFailed
         }
+
+        if #available(iOS 18.0, *) {
+            try await export.export(to: outputURL, as: .m4a)
+            return outputURL
+        }
+
         export.outputURL = outputURL
         export.outputFileType = .m4a
 
         return try await withCheckedThrowingContinuation { continuation in
             export.exportAsynchronously {
-                if export.status == .completed, let url = export.outputURL {
-                    continuation.resume(returning: url)
+                if export.status == .completed {
+                    continuation.resume(returning: outputURL)
                 } else {
                     continuation.resume(throwing: export.error ?? ExportError.exportFailed)
                 }

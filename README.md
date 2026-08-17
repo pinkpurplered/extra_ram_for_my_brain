@@ -15,3 +15,7 @@ open iOS/LoopRecorder/LoopRecorder.xcodeproj
 Pick your signing team, connect your phone, press **Run** (⌘R).
 
 Details: [iOS/LoopRecorder/README.md](iOS/LoopRecorder/README.md)
+
+## Support
+
+If this is useful to you, [buy me a coffee](https://buymeacoffee.com/pinkredpurple).

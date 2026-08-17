@@ -1,0 +1,1 @@
+Recall Audio is a background rolling audio recorder. Tap the mic to start recording; the app keeps the last hour in a buffer. Use the slider to save 1–60 minutes as a clip. Requires a physical iPhone with microphone access. No login required. All audio stays on device.

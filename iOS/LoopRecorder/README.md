@@ -1,4 +1,4 @@
-# extra RAM for my brain
+# Recall Audio
 
 iPhone app that records in the background and keeps **only the last hour**. Save the last 1–60 minutes anytime as a `.m4a` file.
 
@@ -25,7 +25,7 @@ Older than 1 hour is deleted automatically. Saved clips stay until you remove th
 
 ## Find your files
 
-**Files → On My iPhone → extra RAM for my brain → extraramformybrain**
+**Files → On My iPhone → Recall Audio → extraramformybrain**
 
 ## Tweaks
 
@@ -42,3 +42,7 @@ In `Audio/LoopAudioRecorder.swift`:
 | No mic | Use a physical iPhone |
 | Nothing to save yet | Record for at least ~60 seconds first |
 | Signing errors | Pick a valid Team in Xcode |
+
+## Support
+
+If this app is useful to you, [buy me a coffee](https://buymeacoffee.com/pinkredpurple).
