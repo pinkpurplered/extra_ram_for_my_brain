@@ -46,6 +46,10 @@ fastlane metadata
 fastlane submit
 ```
 
+## iCloud Drive (saved clips)
+
+Saved clips are stored in **iCloud → Recall Audio**. iCloud is enabled on the bundle ID via App Store Connect API; Xcode automatic signing picks up the updated provisioning profile on build.
+
 ## Manual steps in App Store Connect
 
 After the build uploads, open [App Store Connect](https://appstoreconnect.apple.com) and complete:

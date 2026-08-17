@@ -25,7 +25,9 @@ Older than 1 hour is deleted automatically. Saved clips stay until you remove th
 
 ## Find your files
 
-**Files → On My iPhone → Recall Audio → extraramformybrain**
+**Files → iCloud → Recall Audio**
+
+Saved clips sync across devices signed into the same iCloud account. Recording segments (the rolling buffer) stay on the device only.
 
 ## Tweaks
 

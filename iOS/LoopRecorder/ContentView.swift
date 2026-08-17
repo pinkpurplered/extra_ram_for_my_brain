@@ -193,6 +193,12 @@ struct ContentView: View {
             Text(recorder.isRecording ? "Tap to stop" : "Tap to record")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            Text("Only record with permission from everyone present.")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
         }
     }
 

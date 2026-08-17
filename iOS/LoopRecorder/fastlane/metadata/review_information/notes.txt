@@ -1,1 +1,11 @@
-Recall Audio is a background rolling audio recorder. Tap the mic to start recording; the app keeps the last hour in a buffer. Use the slider to save 1–60 minutes as a clip. Requires a physical iPhone with microphone access. No login required. All audio stays on device.
+Recall Audio is a background rolling audio recorder for iPhone.
+
+How to test:
+1. Use a physical iPhone (microphone required; simulator is not supported).
+2. Sign in to iCloud and enable iCloud Drive in Settings (recommended so saved clips appear under Files → iCloud → Recall Audio).
+3. Launch the app and tap the microphone button to start recording.
+4. Wait at least 1–2 minutes, then use the slider and tap "Save last X minutes".
+5. Open the list icon (top right) to preview saved clips, or open Files → iCloud → Recall Audio (or On My iPhone → Recall Audio if iCloud is unavailable).
+6. The orange/green microphone indicator appears in the status bar while recording, including in the background.
+
+No login, account, or demo credentials are required. Saved clips stay on the user's device or personal iCloud account; we do not operate servers that receive audio.

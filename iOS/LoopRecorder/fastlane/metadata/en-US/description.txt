@@ -4,6 +4,6 @@ Never miss a thought again. Recall Audio records in the background and keeps the
 • Save the last 1–60 minutes with one tap
 • Works in the background while you use other apps
 • Organize clips in folders
-• Export via the Files app
+• Saved clips appear in the Files app (iCloud → Recall Audio)
 
 Perfect for capturing conversations, ideas, and moments you wish you'd recorded earlier.
